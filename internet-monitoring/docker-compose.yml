@@ -11,7 +11,7 @@ networks:
 
 services:
   prometheus:
-    image: prom/prometheus:v2.25.2
+    image: prom/prometheus:latest
     restart: always
     volumes:
       - ./prometheus/:/etc/prometheus/
@@ -29,12 +29,12 @@ services:
       - speedtest:speedtest
       - cadvisor:cadvisor
       - nodeexp:nodeexp
+      - snmp:snmp
     networks:
       - back-tier
 
   cadvisor:
-    image: braingamer/cadvisor-arm:latest
-    container_name: monitoring_cadvisor
+    image: zcube/cadvisor:v0.38.8
     privileged: true
     restart: unless-stopped
     volumes:
@@ -42,15 +42,18 @@ services:
       - /var/run:/var/run:rw
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
     devices:
       - /dev/kmsg
     expose:
       - 8080
     networks:
       - back-tier
+    command:
+      - '--disable_metrics=hugetlb'
 
   grafana:
-    image: grafana/grafana:8.0.6
+    image: grafana/grafana:8.0.7
     restart: always
     volumes:
       - grafana_data:/var/lib/grafana
@@ -110,3 +113,16 @@ services:
       - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
     networks:
       - back-tier
+
+  snmp:
+    image: prom/snmp-exporter:latest
+    volumes:
+      - ./snmp/:/etc/snmp_exporter
+    ports:
+      - 9116:9116
+    restart: always
+    command: 
+      - '--config.file=/etc/snmp_exporter/snmp.yml'
+    networks:
+      - back-tier
+
