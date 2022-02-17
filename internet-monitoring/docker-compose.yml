@@ -126,3 +126,12 @@ services:
     networks:
       - back-tier
 
+  apcupsd-exporter:
+    image: sfudeus/apcupsd_exporter:master_1.17.3
+    ports:
+      - 9162:9162/tcp
+    command: '-apcupsd.addr 192.168.86.54:3551'
+    networks:
+      - back-tier
+    restart: always
+    
