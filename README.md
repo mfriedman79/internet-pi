@@ -62,6 +62,8 @@ Visit the Pi's IP address (e.g. http://192.168.1.10/) and use the `pihole_passwo
 
 Visit the Pi's IP address with port 3030 (e.g. http://192.168.1.10:3030/), and log in with username `admin` and the password `monitoring_grafana_admin_password` you configured in your `config.yml`.
 
+To find the dashboard, navigate to Dashboards, click Browse, then go to the Internet connection dashboard. If you star this dashboard, it will appear on the Grafana home page.
+
 > Note: The `monitoring_grafana_admin_password` is only used the first time Grafana starts up; if you need to change it later, do it via Grafana's admin UI.
 
 ## Updating
@@ -82,6 +84,31 @@ At some point in the future, a dedicated upgrade playbook may be added, but for 
 ## Backups
 
 A guide for backing up the configurations and historical data will be posted here as part of [Issue #194: Create Backup guide](https://github.com/geerlingguy/internet-pi/issues/194).
+
+## Uninstall
+
+To remove `internet-pi` from your system, run the following commands (assuming the default install location of `~`, your home directory):
+
+```bash
+# Enter the internet-monitoring directory.
+cd ~/internet-monitoring
+
+# Shut down internet-monitoring containers and delete data volumes.
+docker-compose down -v
+
+# Enter the pi-hole directory.
+cd ~/pi-hole
+
+# Shutdown pi-hole containers and delete data volumes.
+docker-compose down -v
+
+# Delete all the unused container images, volumes, etc. from the system.
+docker system prune -f
+```
+
+Do the same thing for any of the other optional directories added by this project (e.g. `shelly-plug-prometheus`, `starlink-exporter`, etc.).
+
+You can then delete the `internet-monitoring`, `pi-hole`, etc. folders and everything will be gone from your system.
 
 ## License
 
