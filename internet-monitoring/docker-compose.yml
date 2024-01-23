@@ -8,6 +8,8 @@ volumes:
 networks:
   front-tier:
   back-tier:
+  traefik-proxy:
+    external: true
 
 services:
   prometheus:
@@ -30,11 +32,25 @@ services:
       - cadvisor:cadvisor
       - nodeexp:nodeexp
       - snmp:snmp
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.prometheus.entrypoints=http"
+      - "traefik.http.routers.prometheus.rule=Host(`prometheus.local.friedman.network`)"
+      - "traefik.http.middlewares.prometheus-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.prometheus.middlewares=prometheus-https-redirect"
+      - "traefik.http.routers.prometheus-secure.entrypoints=https"
+      - "traefik.http.routers.prometheus-secure.rule=Host(`prometheus.local.friedman.network`)"
+      - "traefik.http.routers.prometheus-secure.tls=true"
+      - "traefik.http.routers.prometheus-secure.service=prometheus"
+      - "traefik.http.services.prometheus.loadbalancer.server.port=9090"
+      - "traefik.docker.network=traefik-proxy"
     networks:
       - back-tier
+      - traefik-proxy
 
   cadvisor:
-    image: zcube/cadvisor:v0.38.8
+    #image: zcube/cadvisor:v0.38.8
+    image: michbeck100/cadvisor:latest
     privileged: true
     restart: unless-stopped
     volumes:
@@ -44,7 +60,7 @@ services:
       - /var/lib/docker/:/var/lib/docker:ro
       - /dev/disk/:/dev/disk:ro
     devices:
-      - /dev/kmsg
+      - '/dev/kmsg:/dev/kmsg'
     expose:
       - 8080
     networks:
@@ -53,20 +69,34 @@ services:
       - '--disable_metrics=hugetlb'
 
   grafana:
-    image: grafana/grafana:8.0.7
+    #image: grafana/grafana:8.0.7
+    image: grafana/grafana:latest
     restart: always
     volumes:
       - grafana_data:/var/lib/grafana
       - ./grafana/provisioning/:/etc/grafana/provisioning/
+      #- ./grafana/etc:/etc/grafana:ro
     depends_on:
       - prometheus
     ports:
       - 3030:3000
     env_file:
       - ./grafana/config.monitoring
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.grafana.entrypoints=http"
+      - "traefik.http.routers.grafana.rule=Host(`grafana.local.friedman.network`)"
+      - "traefik.http.middlewares.grafana-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.grafana.middlewares=grafana-https-redirect"
+      - "traefik.http.routers.grafana-secure.entrypoints=https"
+      - "traefik.http.routers.grafana-secure.rule=Host(`grafana.local.friedman.network`)"
+      - "traefik.http.routers.grafana-secure.tls=true"
+      - "traefik.http.routers.grafana-secure.service=grafana"
+      - "traefik.http.services.grafana.loadbalancer.server.port=3000"
+      - "traefik.docker.network=traefik-proxy"
     networks:
       - back-tier
-      - front-tier
+      - traefik-proxy
 
   ping:
     tty: true
@@ -130,8 +160,18 @@ services:
     image: sfudeus/apcupsd_exporter:master_1.17.3
     ports:
       - 9162:9162/tcp
-    command: '-apcupsd.addr 192.168.86.54:3551'
+    command: '-apcupsd.addr 192.168.22.54:3551'
     networks:
       - back-tier
     restart: always
-    
+
+  smartthings-metrics:
+    ports:
+      - '9153:9153'
+    environment:
+      - 'true'
+    image: moikot/smartthings-metrics
+    command: '-token c7150787-385a-41b3-917b-3b5ff0f3349d'
+    networks:
+      - back-tier          
+    restart: always

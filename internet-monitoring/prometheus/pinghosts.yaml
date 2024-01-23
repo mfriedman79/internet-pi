@@ -3,4 +3,4 @@
     - https://github.com/;github.com
     - https://www.apple.com/;apple.com
     - https://www.expedia.com/;expedia.com
-    - http://192.168.86.1/;default.gateway
+    - http://192.168.22.1:8833/ss/;Firewalla_Gateway

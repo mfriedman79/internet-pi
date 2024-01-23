@@ -94,7 +94,7 @@ scrape_configs:
       module: [cisco_mib]
     static_configs:
       - targets:
-        - 192.168.86.10
+        - 192.168.22.10
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target
@@ -102,3 +102,16 @@ scrape_configs:
         target_label: instance
       - target_label: __address__
         replacement: snmp:9116
+
+  - job_name: 'pve'
+    static_configs:
+      - targets:
+        - 192.168.22.15:9221  # Proxmox VE node.
+    metrics_path: /pve
+    params:
+      module: [default]
+
+  - job_name: 'smartthings'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['smartthings-metrics:9153']

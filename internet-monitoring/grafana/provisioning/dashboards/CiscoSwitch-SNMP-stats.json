@@ -86,7 +86,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "snmp_sysUpTime{job=\"$Job\"} * 10",
+          "expr": "sysUpTime{job=\"$Job\"} * 10",
           "interval": "",
           "legendFormat": "In",
           "refId": "A"
@@ -162,7 +162,7 @@
       "pluginVersion": "8.0.7",
       "targets": [
         {
-          "expr": "max(irate(snmp_ifHCOutOctets{job=\"$Job\"}[5m]))",
+          "expr": "max(irate(ifHCOutOctets{job=\"$Job\"}[5m]))",
           "instant": false,
           "legendFormat": "Out",
           "refId": "A"
@@ -238,7 +238,7 @@
       "pluginVersion": "8.0.7",
       "targets": [
         {
-          "expr": "max(irate(snmp_ifHCInOctets{job=\"$Job\"}[5m]))",
+          "expr": "max(irate(ifHCInOctets{job=\"$Job\"}[5m]))",
           "legendFormat": "In",
           "refId": "A"
         }
@@ -313,7 +313,7 @@
       "pluginVersion": "8.0.7",
       "targets": [
         {
-          "expr": "max(delta(snmp_ifHCOutOctets{job=\"$Job\"}[$__range]))",
+          "expr": "max(delta(ifHCOutOctets{job=\"$Job\"}[$__range]))",
           "legendFormat": "Out",
           "refId": "A"
         }
@@ -388,7 +388,7 @@
       "pluginVersion": "8.0.7",
       "targets": [
         {
-          "expr": "max(delta(snmp_ifHCInOctets{job=\"$Job\"}[$__range]))",
+          "expr": "max(delta(ifHCInOctets{job=\"$Job\"}[$__range]))",
           "instant": false,
           "legendFormat": "In",
           "refId": "A"
@@ -561,28 +561,28 @@
       ],
       "targets": [
         {
-          "expr": "irate(snmp_ifHCOutOctets{job=\"$Job\"}[5m])",
+          "expr": "irate(ifHCOutOctets{job=\"$Job\"}[5m])",
           "format": "table",
           "instant": true,
           "legendFormat": "out",
           "refId": "A"
         },
         {
-          "expr": "irate(snmp_ifHCInOctets{job=\"$Job\"}[5m])",
+          "expr": "irate(ifHCInOctets{job=\"$Job\"}[5m])",
           "format": "table",
           "instant": true,
           "legendFormat": "in",
           "refId": "B"
         },
         {
-          "expr": "delta(snmp_ifHCOutOctets{job=\"$Job\"}[$__range])",
+          "expr": "delta(ifHCOutOctets{job=\"$Job\"}[$__range])",
           "format": "table",
           "instant": true,
           "legendFormat": "total out",
           "refId": "C"
         },
         {
-          "expr": "delta(snmp_ifHCInOctets{job=\"$Job\"}[$__range])",
+          "expr": "delta(ifHCInOctets{job=\"$Job\"}[$__range])",
           "format": "table",
           "instant": true,
           "legendFormat": "total in",
@@ -655,7 +655,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "irate(snmp_ifHCOutOctets{job=\"$Job\"}[5m])",
+          "expr": "irate(ifHCOutOctets{job=\"$Job\"}[5m])",
           "interval": "",
           "intervalFactor": 1,
           "legendFormat": "{{ifName}} ({{ifAlias}})",
@@ -719,7 +719,7 @@
       "pluginVersion": "8.0.7",
       "targets": [
         {
-          "expr": "irate(snmp_ifHCOutOctets{job=\"$Job\"}[5m])",
+          "expr": "irate(ifHCOutOctets{job=\"$Job\"}[5m])",
           "intervalFactor": 1,
           "legendFormat": "{{ifName}} ({{ifAlias}})",
           "refId": "B"
@@ -784,14 +784,14 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "irate(snmp_ifHCOutOctets{job=\"$Job\"}[5m])",
+          "expr": "irate(ifHCOutOctets{job=\"$Job\"}[5m])",
           "instant": false,
           "intervalFactor": 1,
           "legendFormat": "Out: {{ifName}} ({{ifAlias}})",
           "refId": "A"
         },
         {
-          "expr": "-irate(snmp_ifHCInOctets{job=\"$Job\"}[5m])",
+          "expr": "-irate(ifHCInOctets{job=\"$Job\"}[5m])",
           "intervalFactor": 1,
           "legendFormat": "In: {{ifName}} ({{ifAlias}})",
           "refId": "B"
@@ -856,7 +856,7 @@
           "value": "snmp"
         },
         "datasource": "prometheus",
-        "definition": "label_values(snmp_ifHCInOctets,  job)",
+        "definition": "label_values(ifHCInOctets,  job)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -866,7 +866,7 @@
         "name": "Job",
         "options": [],
         "query": {
-          "query": "label_values(snmp_ifHCInOctets,  job)",
+          "query": "label_values(ifHCInOctets,  job)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
