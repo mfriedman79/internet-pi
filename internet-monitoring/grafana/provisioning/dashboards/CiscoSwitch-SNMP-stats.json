@@ -719,7 +719,7 @@
       "pluginVersion": "8.0.7",
       "targets": [
         {
-          "expr": "irate(ifHCOutOctets{job=\"$Job\"}[5m])",
+          "expr": "irate(ifHCInOctets{job=\"$Job\"}[5m])",
           "intervalFactor": 1,
           "legendFormat": "{{ifName}} ({{ifAlias}})",
           "refId": "B"
@@ -910,7 +910,7 @@
     ]
   },
   "timezone": "",
-  "title": "Cisco SNMP Stats",
+  "title": "Switch SNMP Stats",
   "uid": "ZOONimmgk",
   "version": 5
 }

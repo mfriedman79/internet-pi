@@ -6,7 +6,7 @@ volumes:
   grafana_data: {}
 
 networks:
-  front-tier:
+#  front-tier:
   back-tier:
   traefik-proxy:
     external: true
@@ -21,7 +21,7 @@ services:
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
-      - '--storage.tsdb.retention.time=90d'
+      - '--storage.tsdb.retention.time=180d'
       - '--web.console.libraries=/usr/share/prometheus/console_libraries'
       - '--web.console.templates=/usr/share/prometheus/consoles'
     ports:
@@ -67,6 +67,7 @@ services:
       - back-tier
     command:
       - '--disable_metrics=hugetlb'
+      - '--disable_metrics=referenced_memory'
 
   grafana:
     #image: grafana/grafana:8.0.7
@@ -156,11 +157,29 @@ services:
     networks:
       - back-tier
 
-  apcupsd-exporter:
-    image: sfudeus/apcupsd_exporter:master_1.17.3
+#  apcupsd-exporter:
+#    image: sfudeus/apcupsd_exporter:master_1.17.3
+#    ports:
+#      - 9162:9162/tcp
+#    command: '-apcupsd.addr 192.168.22.54:3551'
+#    networks:
+#      - back-tier
+#    restart: always
+
+  nut-exporter:
+    # Stable v1
+    image: hon95/prometheus-nut-exporter:1
+    environment:
+      - TZ=America/Chicago
+      - HTTP_PATH=/metrics
+      # Defaults
+      - RUST_LOG=info
+      #- HTTP_ADDRESS=127.0.0.1
+      #- HTTP_PORT=9995
+      - LOG_REQUESTS_CONSOLE=false
+      - PRINT_METRICS_AND_EXIT=false
     ports:
-      - 9162:9162/tcp
-    command: '-apcupsd.addr 192.168.22.54:3551'
+      - '9995:9995'
     networks:
       - back-tier
     restart: always
@@ -174,4 +193,18 @@ services:
     command: '-token c7150787-385a-41b3-917b-3b5ff0f3349d'
     networks:
       - back-tier          
+    restart: always
+
+  omada_exporter:
+    image: chhaley/omada_exporter
+    ports:
+      - 9202:9202
+    environment:
+      - OMADA_HOST=https://192.168.23.20:8043
+      - OMADA_USER=s-omada
+      - OMADA_PASS=phps4JmP_ouhqR9
+      - OMADA_SITE=Bannockburn
+      - OMADA_INSECURE=true
+    networks:
+      - back-tier
     restart: always
